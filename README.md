@@ -41,6 +41,6 @@ awk 'NR%4==2' Bm88315_1_paired.fq | grep -o "[ATCG]" | wc -l
 awk 'NR%4==2' Bm88315_2_paired.fq | grep -o "[ATCG]" | wc -l
 ```
 **Base Counts**
-* Forward Paired: 897156993 
-* Reverse Paired: 897217181
+* Forward Paired: 897,156,993 
+* Reverse Paired: 897,217,181
 * Total: 1,794,374,174
