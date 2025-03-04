@@ -38,10 +38,9 @@ fastqc -t 2 Bm88315_1_paired.fq Bm88315_1_unpaired.fq Bm88315_2_paired.fq Bm8831
 ## 4. Counting Remaining Bases:
 ```
 awk 'NR%4==2' Bm88315_1_paired.fq | grep -o "[ATCG]" | wc -l
+awk 'NR%4==2' Bm88315_2_paired.fq | grep -o "[ATCG]" | wc -l
 ```
 **Base Counts**
-* A: 230558048
-* T: 227845551
-* C: 218894589
-* G: 219858805
-* Total: 897156993
+* Forward Paired: 897156993 
+* Reverse Paired: 897217181
+* Total: 1,794,374,174
