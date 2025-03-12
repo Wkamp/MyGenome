@@ -35,6 +35,7 @@ java -jar trimmomatic-0.38.jar PE -threads 2 -phred33 -trimlog Bm_errorlog.txt -
 * Dropped Read Percent: 5.38%
 
 ## 3. Analyzing Trimmed Sequence
+Once again we are using fastqc for analysis.
 ```
 fastqc -t 2 Bm88315_1_paired.fq Bm88315_1_unpaired.fq Bm88315_2_paired.fq Bm88315_2_unpaired.fq -o trimmed_fastqc_output
 ```
