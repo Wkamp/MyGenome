@@ -45,7 +45,7 @@ fastqc -t 2 Bm88315_1_paired.fq Bm88315_1_unpaired.fq Bm88315_2_paired.fq Bm8831
 * [Backward Paired](https://wkamp.github.io/MyGenome/data/fastqc_output/trimmed_Bm88315_2_paired_fastqc.html)
 * [Backward Unpaired](https://wkamp.github.io/MyGenome/data/fastqc_output/trimmed_Bm88315_2_unpaired_fastqc.html)
 
-As you can see below, the trimming process managed to almost completely removed all adapter contamination. There is however an anomalous overrepresented sequence of all G's in the reverse read, but it shouldn't pose a problem for our genome assembly. 
+As you can see below, the trimming process managed to almost completely remove all adapter contamination. There is however an anomalous overrepresented sequence of all G's in the reverse read, but it shouldn't pose a problem for our genome assembly. 
 | ![Per-base sequence quality in the reverse paired sequence](data/fastqc_output/trimmed_reverse_paired_quality.png) | 
 |:--:| 
 | *Screenshot of the per-base sequence quality in the reverse paired sequence.* |
