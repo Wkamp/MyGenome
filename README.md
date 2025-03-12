@@ -1,7 +1,7 @@
 # MyGenome
 
 ## 1. Analyzing Sequence Quality
-The Bm88315 sequence data was analyzed using fastqc.
+The Bm88315 sequence data was first analyzed using fastqc.
 ```
 fastqc -t 2 Bm88315_1.fq Bm88315_2.fq -o pretrimmed_fastqc_output
 ```
