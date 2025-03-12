@@ -10,6 +10,9 @@ fastqc -t 2 Bm88315_1.fq Bm88315_2.fq -o pretrimmed_fastqc_output
 * [Backward](https://wkamp.github.io/MyGenome/data/fastqc_output/pretrimmed_Bm88315_2_fastqc.html)
 
 The fastqc analysis shows that overall we have a pretty high quality sequence, however there's some adapter contamination and overrepresented sequences which need to be trimmed away.
+| ![Per-base sequence quality in the foward sequence](data/fastqc_output/pretrimmed_forward_quality.png) | 
+|:--:| 
+| *Screenshot of the per-base sequence quality in the foward sequence.* |
 
 | ![Forward adapter contamination](data/fastqc_output/pretimmed_forward_adapter.png) | 
 |:--:| 
@@ -42,15 +45,16 @@ fastqc -t 2 Bm88315_1_paired.fq Bm88315_1_unpaired.fq Bm88315_2_paired.fq Bm8831
 * [Backward Unpaired](https://wkamp.github.io/MyGenome/data/fastqc_output/trimmed_Bm88315_2_unpaired_fastqc.html)
 
 As you can see below, the trimming process managed to almost completely removed all adapter contamination. There is however an anomalous overrepresented sequence of all G's in the reverse read, but it shouldn't pose a problem for our genome assembly. 
-| ![Forward paired adapter contamination](data/fastqc_output/trimmed_forward_paired_adapte.png) | 
+| ![Per-base sequence quality in the reverse paired sequence](data/fastqc_output/trimmed_reverse_paired_quality.png) | 
 |:--:| 
-| *Screenshot of the adapter contamination in the foward paired sequence.* |
+| *Screenshot of the per-base sequence quality in the reverse paired sequence.* |
 
-| ![Forward paired adapter contamination](data/fastqc_output/trimmed_reverse_paired_adapter.png) | 
+| ![adapter contamination in the reverse paired sequence](data/fastqc_output/trimmed_reverse_paired_adapter.png) | 
 |:--:| 
 | *Screenshot of the adapter contamination in the reverse paired sequence.* |
 
 ## 4. Counting Remaining Bases:
+We want to know how many bases of the paired data survived the trimming process.
 ```
 awk 'NR%4==2' Bm88315_1_paired.fq | grep -o "[ATCG]" | wc -l
 awk 'NR%4==2' Bm88315_2_paired.fq | grep -o "[ATCG]" | wc -l
