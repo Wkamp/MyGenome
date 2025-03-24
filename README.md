@@ -106,7 +106,7 @@ sbatch velvetoptimiser_noclean.sh Bm88315 83 119 2
 * Assembly score: 40734870
 * Velveth version: 1.2.10
 * Velvetg version: 1.2.10
-* Readfile(s): -shortPaired -fastq -separate forward.fq reverse.f
+* Readfile(s): -shortPaired -fastq -separate forward.fq reverse.fq
 * Velveth parameter string: auto_data_97 97  -shortPaired -fastq -separate forward.fq reverse.fq
 * Velvetg parameter string: auto_data_97  -clean no -clean yes -exp_cov 11 -cov_cutoff 3.17393593699346
 * Velvet hash value: 97
