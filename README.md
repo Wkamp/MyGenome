@@ -102,7 +102,6 @@ sbatch velvetoptimiser_noclean.sh Bm88315 83 119 2
 ```
 
 **Output:**
-* Final optimised assembly details:
 * Assembly score: 40734870
 * Velveth version: 1.2.10
 * Velvetg version: 1.2.10
