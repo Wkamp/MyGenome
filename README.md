@@ -67,14 +67,13 @@ awk 'NR%4==2' Bm88315_2_paired.fq | grep -o "[ATCG]" | wc -l
 
 ## Genome Assembly
 ### 1. Initial Run
-I'm using [Velvet](https://en.wikipedia.org/wiki/Velvet_assembler), more specifically [VelvetOptimiser](https://github.com/tseemann/VelvetOptimiser/tree/master) to assemble the genome. VelvetOptimiser uses Velvet to find the optimal kmer value, you just give it a range and step size.
+I'm using [Velvet](https://en.wikipedia.org/wiki/Velvet_assembler), more specifically [VelvetOptimiser](https://github.com/tseemann/VelvetOptimiser/tree/master) to assemble the genome. VelvetOptimiser uses Velvet to find the optimal kmer value; you just give it a range and step size.
 ```
 sbatch velvetoptimiser_noclean.sh Bm88315 61 131 10
 ```
 *kmer_start=61, kmer_end=131, step=10*
 
-**Output**
-* Assembly id: 5
+**Output:**
 * Assembly score: 40737045
 * Velveth version: 1.2.10
 * Velvetg version: 1.2.10
@@ -94,3 +93,32 @@ sbatch velvetoptimiser_noclean.sh Bm88315 61 131 10
 * Paired-end library 1 has length: 232, sample standard deviation: 104
 
 The optimal kmer value is the velvet hash value, so 101.
+
+### 2. Optimal Run
+In-order to get the most optimized kmer value we want to use a lower step size; the initial run will be used to narrow down the range. I want the previously found optimal kmer of 101 to be the middle of my narrowed down range, and I will half the total range. Previous range length was 70, 70/2 = 35, however 35/2 = 17.5, and we want to start on an odd number, so we will round up to 18. Final range is: [83, 119], step=2.
+
+```
+sbatch velvetoptimiser_noclean.sh Bm88315 83 119 2
+```
+
+**Output:**
+* Final optimised assembly details:
+* Assembly score: 40734870
+* Velveth version: 1.2.10
+* Velvetg version: 1.2.10
+* Readfile(s): -shortPaired -fastq -separate forward.fq reverse.f
+* Velveth parameter string: auto_data_97 97  -shortPaired -fastq -separate forward.fq reverse.fq
+* Velvetg parameter string: auto_data_97  -clean no -clean yes -exp_cov 11 -cov_cutoff 3.17393593699346
+* Velvet hash value: 97
+* Roadmap file size: 680108857
+* Total number of contigs: 4175
+* n50: 29272
+* length of longest contig: 151383
+* Total bases in contigs: 41374414
+* Number of contigs > 1k: 2503
+* Total bases in contigs > 1k: 40734870
+* Paired Library insert stats:
+* Paired-end library 1 has length: 231, sample standard deviation: 103
+* Paired-end library 1 has length: 232, sample standard deviation: 104
+
+The most optimal kmer is 97.
