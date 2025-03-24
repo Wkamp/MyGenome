@@ -1,5 +1,5 @@
 # MyGenome
-## Pre-processing
+## Pre-Processing
 ### 1. Analyzing Sequence Quality
 The Bm88315 sequence data was first analyzed using fastqc.
 ```
