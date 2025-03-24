@@ -1,6 +1,6 @@
 # MyGenome
-
-## 1. Analyzing Sequence Quality
+## Pre-processing
+### 1. Analyzing Sequence Quality
 The Bm88315 sequence data was first analyzed using fastqc.
 ```
 fastqc -t 2 Bm88315_1.fq Bm88315_2.fq -o pretrimmed_fastqc_output
@@ -18,7 +18,7 @@ The fastqc analysis shows that overall we have a pretty high quality sequence, h
 |:--:| 
 | *Screenshot of the adapter contamination in the forward sequence.* |
 
-## 2. Trimming the Sequence
+### 2. Trimming the Sequence
 The sequence was trimmed using Trimmomatic 0.38.
 ```
 java -jar trimmomatic-0.38.jar PE -threads 2 -phred33 -trimlog Bm_errorlog.txt -summary trim_summary.txt Bm88315_1.fq Bm88315_2.fq Bm88315_1_paired.fq Bm88315_1_unpaired.fq Bm88315_2_paired.fq Bm88315_2_unpaired.fq ILLUMINACLIP:adaptors.fasta:2:30:10 SLIDINGWINDOW:20:20 MINLEN:150
@@ -34,7 +34,7 @@ java -jar trimmomatic-0.38.jar PE -threads 2 -phred33 -trimlog Bm_errorlog.txt -
 * Dropped Reads: 420174
 * Dropped Read Percent: 5.38%
 
-## 3. Analyzing Trimmed Sequence
+### 3. Analyzing Trimmed Sequence
 Once again we are using fastqc for analysis.
 ```
 fastqc -t 2 Bm88315_1_paired.fq Bm88315_1_unpaired.fq Bm88315_2_paired.fq Bm88315_2_unpaired.fq -o trimmed_fastqc_output
@@ -54,7 +54,7 @@ As you can see below, the trimming process managed to almost completely remove a
 |:--:| 
 | *Screenshot of the adapter contamination in the reverse paired sequence.* |
 
-## 4. Counting Remaining Bases:
+### 4. Counting Remaining Bases:
 We want to know how many bases of the paired data survived the trimming process.
 ```
 awk 'NR%4==2' Bm88315_1_paired.fq | grep -o "[ATCG]" | wc -l
@@ -64,3 +64,33 @@ awk 'NR%4==2' Bm88315_2_paired.fq | grep -o "[ATCG]" | wc -l
 * Forward Paired: 897,156,993 
 * Reverse Paired: 897,217,181
 * Total: 1,794,374,174
+
+## Genome Assembly
+### 1. Initial Run
+I'm using [Velvet](https://en.wikipedia.org/wiki/Velvet_assembler), more specifically [VelvetOptimiser](https://github.com/tseemann/VelvetOptimiser/tree/master) to assemble the genome. VelvetOptimiser uses Velvet to find the optimal kmer value, you just give it a range and step size.
+```
+sbatch velvetoptimiser_noclean.sh Bm88315 61 131 10
+```
+*kmer_start=61, kmer_end=131, step=10*
+
+**Output**
+* Assembly id: 5
+* Assembly score: 40737045
+* Velveth version: 1.2.10
+* Velvetg version: 1.2.10
+* Readfile(s): -shortPaired -fastq -separate forward.fq reverse.fq
+* Velveth parameter string: auto_data_101 101  -shortPaired -fastq -separate forward.fq reverse.fq
+* Velvetg parameter string: auto_data_101  -clean no -clean yes -exp_cov 10 -cov_cutoff 2.88539630635769
+* Velvet hash value: 101
+* Roadmap file size: 667836908
+* Total number of contigs: 8171
+* n50: 23166
+* length of longest contig: 150834
+* Total bases in contigs: 42117401
+* Number of contigs > 1k: 2924
+* Total bases in contigs > 1k: 40737045
+* Paired Library insert stats:
+* Paired-end library 1 has length: 231, sample standard deviation: 103
+* Paired-end library 1 has length: 232, sample standard deviation: 104
+
+The optimal kmer value is the velvet hash value, so 101.
