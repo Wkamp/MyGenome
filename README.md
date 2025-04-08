@@ -133,7 +133,7 @@ perl SimpleFastaHeaders.pl contigs.fa
 
 <br>
 
-Additionally, before I run BUSCO in the next step I need to cull away the small contigs (length < 200).
+Additionally, before I run BUSCO in the next step I need to cull the small contigs (length < 200).
 ```
 perl CullShortContigs.pl Bm88315_nh.fasta
 ```
@@ -173,3 +173,8 @@ Dependencies and versions:
 * miniprot_align: 0.13-r248
 * python: sys.version_info(major=3, minor=7, micro=12, releaselevel='final', serial=0)
 * busco: 5.7.0
+
+## BLAST
+### 1. Mitochondrial Genome
+### 2. B71
+### 3. B71v2sh
