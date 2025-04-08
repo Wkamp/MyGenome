@@ -1,4 +1,4 @@
-# MyGenome
+# Bm88315 Genome Assembly
 ## Pre-Processing
 ### 1. Analyzing Sequence Quality
 The Bm88315 sequence data was first analyzed using fastqc.
@@ -9,7 +9,7 @@ fastqc -t 2 Bm88315_1.fq Bm88315_2.fq -o pretrimmed_fastqc_output
 * [Forward](https://wkamp.github.io/MyGenome/data/fastqc_output/pretrimmed_Bm88315_1_fastqc.html)
 * [Backward](https://wkamp.github.io/MyGenome/data/fastqc_output/pretrimmed_Bm88315_2_fastqc.html)
 
-The fastqc analysis shows that overall we have a pretty high quality sequence, however there's some adapter contamination and overrepresented sequences which need to be trimmed away.
+The fastqc analysis shows that overall I have a pretty high quality sequence, however there's some adapter contamination and overrepresented sequences which need to be trimmed away.
 | ![Per-base sequence quality in the foward sequence](data/fastqc_output/pretrimmed_forward_quality.png) | 
 |:--:| 
 | *Screenshot of the per-base sequence quality in the foward sequence.* |
@@ -35,7 +35,7 @@ java -jar trimmomatic-0.38.jar PE -threads 2 -phred33 -trimlog Bm_errorlog.txt -
 * Dropped Read Percent: 5.38%
 
 ### 3. Analyzing Trimmed Sequence
-Once again we are using fastqc for analysis.
+Once again I am using fastqc for analysis.
 ```
 fastqc -t 2 Bm88315_1_paired.fq Bm88315_1_unpaired.fq Bm88315_2_paired.fq Bm88315_2_unpaired.fq -o trimmed_fastqc_output
 ```
@@ -55,7 +55,7 @@ As you can see below, the trimming process managed to almost completely remove a
 | *Screenshot of the adapter contamination in the reverse paired sequence.* |
 
 ### 4. Counting Remaining Bases:
-We want to know how many bases of the paired data survived the trimming process.
+I want to know how many bases of the paired data survived the trimming process.
 ```
 awk 'NR%4==2' Bm88315_1_paired.fq | grep -o "[ATCG]" | wc -l
 awk 'NR%4==2' Bm88315_2_paired.fq | grep -o "[ATCG]" | wc -l
@@ -95,7 +95,7 @@ sbatch velvetoptimiser_noclean.sh Bm88315 61 131 10
 The optimal kmer value is the velvet hash value, so 101.
 
 ### 2. Optimal Run
-In-order to get the most optimized kmer value we want to use a lower step size; the initial run will be used to narrow down the range. I want the previously found optimal kmer of 101 to be the middle of my narrowed down range, and I will half the total range. Previous range length was 70, 70/2 = 35, however 35/2 = 17.5, and we want to start on an odd number, so we will round up to 18. Final range is: [83, 119], step=2.
+In-order to get the most optimized kmer value I want to use a lower step size; the initial run will be used to narrow down the range. I want the previously found optimal kmer of 101 to be the middle of my narrowed down range, and I will half the total range. Previous range length was 70, 70/2 = 35, however 35/2 = 17.5, and I want to start on an odd number, so I will round up to 18. Final range is: [101 - 18, 101 + 18] = [83, 119], step=2.
 
 ```
 sbatch velvetoptimiser_noclean.sh Bm88315 83 119 2
@@ -121,3 +121,55 @@ sbatch velvetoptimiser_noclean.sh Bm88315 83 119 2
 * Paired-end library 1 has length: 232, sample standard deviation: 104
 
 The most optimal kmer is 97.
+
+## Post-Processing
+### 1. Formatting & Culling
+Unfortunately there is not standard format for sequence headers, but I'm going to change the format Velvet gives to:
+\>Bm88315_contig#, where # is the contig number.
+```
+perl SimpleFastaHeaders.pl contigs.fa
+```
+(This script also renames contigs.fa to Bm88315_nh.fasta)
+
+<br>
+
+Additionally, before I run BUSCO in the next step I need to cull away the small contigs (length < 200).
+```
+perl CullShortContigs.pl Bm88315_nh.fasta
+```
+(This script also renames Bm88315_nh.fasta to Bm88315_final.fasta)
+
+**Output:**
+* Contigs Remaing: 3,934
+* Genome Size: 41,327,699
+
+### 2. Assembly Quality Analysis
+I'm using [BUSCO](https://stab.st-andrews.ac.uk/wiki/index.php/BUSCO) to make sure the genome assembly is of high quality.
+```
+sbatch BuscoSingularity.sh Bm88315_final.fasta
+```
+**Output:**
+* C:97.6%[S:97.4%, D:0.2%], F:0.8%, M:1.6%, n:1706, E:3.9%	   
+* 1665	Complete BUSCOs (C)	(of which 65 contain internal stop codons)		   
+* 1662	Complete and single-copy BUSCOs (S)	   
+* 3	Complete and duplicated BUSCOs (D)	   
+* 14	Fragmented BUSCOs (F)			   
+* 27	Missing BUSCOs (M)			   
+* 1706	Total BUSCO groups searched		   
+
+Assembly Statistics:
+* 3934	Number of scaffolds
+* 6950	Number of contigs
+* 41327699	Total length
+* 0.221%	Percent gaps
+* 29 KB	Scaffold N50
+* 13 KB	Contigs N50
+
+
+Dependencies and versions:
+* hmmsearch: 3.1
+* bbtools: 39.06
+* miniprot_index: 0.13-r248
+* miniprot_align: 0.13-r248
+* python: sys.version_info(major=3, minor=7, micro=12, releaselevel='final', serial=0)
+* busco: 5.7.0
