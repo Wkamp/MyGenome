@@ -124,7 +124,7 @@ The most optimal kmer is 97.
 
 ## Post-Processing
 ### 1. Formatting & Culling
-Unfortunately there is not standard format for sequence headers, but I'm going to change the format Velvet gives to:
+Unfortunately there is no standard format for sequence headers, but I'm going to change the format Velvet gives to:
 \>Bm88315_contig#, where # is the contig number.
 ```
 perl SimpleFastaHeaders.pl contigs.fa
