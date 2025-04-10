@@ -95,7 +95,7 @@ sbatch velvetoptimiser_noclean.sh Bm88315 61 131 10
 The optimal kmer value is the velvet hash value, so 101.
 
 ### 2. Optimal Run
-In-order to get the most optimized kmer value I want to use a lower step size; the initial run will be used to narrow down the range. I want the previously found optimal kmer of 101 to be the middle of my narrowed down range, and I will half the total range. Previous range length was 70, 70/2 = 35, however 35/2 = 17.5, and I want to start on an odd number, so I will round up to 18. Final range is: [101 - 18, 101 + 18] = [83, 119], step=2.
+In-order to get the most optimized kmer value I want to use a lower step size; the initial run will be used to narrow down the range. I want the previously found optimal kmer of 101 to be the middle of my narrowed down range, and I will half the total range. Previous range length was 70, 70/2 = 35, however 35/2 = 17.5, and I need to start on an odd number, so I will round up to 18. Final range is: [101 - 18, 101 + 18] = [83, 119], step=2.
 
 ```
 sbatch velvetoptimiser_noclean.sh Bm88315 83 119 2
