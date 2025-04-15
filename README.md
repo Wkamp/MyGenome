@@ -173,3 +173,18 @@ Dependencies and versions:
 * miniprot_align: 0.13-r248
 * python: sys.version_info(major=3, minor=7, micro=12, releaselevel='final', serial=0)
 * busco: 5.7.0
+
+## Blast
+### 1. MoMitochondrion
+```
+singularity run --app blast2120 /share/singularity/images/ccs/conda/amd-conda1-centos8.sinf blastn -query MoMitochondrion.fasta -subject Bm88315_final.fasta -evalue 1e-50 -max_target_seqs 20000 -outfmt '6 qseqid sseqid slen length qstart qend sstart send btop' -out MoMitochondrion.Bm88315_final.BLAST
+```
+
+For NCBI
+```
+awk '$3/$4 > 0.9 {print $2 ",mitochondrion"}' B71v2sh.MyGenome.BLAST > MyGenome_mitochondrion.csv
+```
+### 2. B71v2sh
+```
+singularity run --app blast2120 /share/singularity/images/ccs/conda/amd-conda1-centos8.sinf blastn -query B71v2sh_masked.fasta -subject Bm88315_final.fasta -evalue 1e-50 -max_target_seqs 20000 -outfmt '6 qseqid sseqid slen length qstart qend sstart send btop' -out B71v2sh.Bm88315_final.BLAST
+```
