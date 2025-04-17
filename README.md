@@ -180,11 +180,66 @@ Dependencies and versions:
 singularity run --app blast2120 /share/singularity/images/ccs/conda/amd-conda1-centos8.sinf blastn -query MoMitochondrion.fasta -subject Bm88315_final.fasta -evalue 1e-50 -max_target_seqs 20000 -outfmt '6 qseqid sseqid slen length qstart qend sstart send btop' -out MoMitochondrion.Bm88315_final.BLAST
 ```
 
-For NCBI
+#### Checking Output Size
+The BLAST file should have about 40kb contig size.
 ```
-awk '$3/$4 > 0.9 {print $2 ",mitochondrion"}' B71v2sh.MyGenome.BLAST > MyGenome_mitochondrion.csv
+awk '{print $2, $3}' MoMitochondrion.Bm88315_final.BLAST | sort -u | awk '{sum += $2} END {print sum}'
 ```
+**Output**: 93,633
+
+This is 93kb, which is way too large.
+Peering into the BLAST file you can see there's an issue with contig967:
+| ![Bm88315 MoMitochondrion Blast file](data/Bm88315_blast_screenshot.png) | 
+|:--:| 
+| *Screenshot of the Bm88315 MoMitochondrion Blast file.* |
+
+Contig967 itself is 48kb; exactly why is unclear, it's possible there was a false join. Regardless, to fix it I'm going to trim from position 46498 to 48509.
+```
+awk -v start=46498 -v end=48509 '
+BEGIN {keep_len = end - start + 1}
+/^>/ {
+    if (seq != "") {
+        if (header ~ />Bm88315_contig967/) {
+            seq = substr(seq, 1, start - 1) substr(seq, end + 1)
+        }
+        print header
+        print seq
+    }
+    header = $0
+    seq = ""
+    next
+}
+{
+    seq = $0
+}
+END {
+    if (header ~ />Bm88315_contig967/) {
+        seq = substr(seq, 1, start - 1) substr(seq, end + 1)
+    }
+    print header
+    print seq
+}' Bm88315_final.fasta > trimmed_Bm88315_final.fasta
+```
+### 2. MoMitochondrion Again
+```
+singularity run --app blast2120 /share/singularity/images/ccs/conda/amd-conda1-centos8.sinf blastn -query MoMitochondrion.fasta -subject trimmed_Bm88315_final.fasta -evalue 1e-50 -max_target_seqs 20000 -outfmt '6 qseqid sseqid slen length qstart qend sstart send btop' -out MoMitochondrion.trimmed_Bm88315_final.BLAST
+```
+#### Checking Output Size Again
+```
+awk '{print $2, $3}' MoMitochondrion.Bm88315_final.BLAST | sort -u | awk '{sum += $2} END {print sum}'
+```
+**Output**: 45,124
+
+45kb is an acceptable size.
+
 ### 2. B71v2sh
 ```
-singularity run --app blast2120 /share/singularity/images/ccs/conda/amd-conda1-centos8.sinf blastn -query B71v2sh_masked.fasta -subject Bm88315_final.fasta -evalue 1e-50 -max_target_seqs 20000 -outfmt '6 qseqid sseqid slen length qstart qend sstart send btop' -out B71v2sh.Bm88315_final.BLAST
+singularity run --app blast2120 /share/singularity/images/ccs/conda/amd-conda1-centos8.sinf blastn -query B71v2sh_masked.fasta -subject trimmed_Bm88315_final.fasta -evalue 1e-50 -max_target_seqs 20000 -outfmt '6 qseqid sseqid slen length qstart qend sstart send btop' -out B71v2sh.trimmed_Bm88315_final.BLAST
 ```
+
+#### Contig List for NCBI
+```
+awk '$3/$4 > 0.9 {print $2 ",mitochondrion"}' B71v2sh.trimmed_Bm88315_final.BLAST > Bm88315_mitochondrion.csv
+```
+
+## Genome Prediction
