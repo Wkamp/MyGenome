@@ -242,4 +242,91 @@ singularity run --app blast2120 /share/singularity/images/ccs/conda/amd-conda1-c
 awk '$3/$4 > 0.9 {print $2 ",mitochondrion"}' B71v2sh.trimmed_Bm88315_final.BLAST > Bm88315_mitochondrion.csv
 ```
 
-## Genome Prediction
+## Gene Prediction
+In-order to find what regions in the genome are likely to be genes, we can use an hmm (hidden markov model) tool Snap. However you also need a reference genome and annotations.
+
+### 1. Generating Training Data
+
+
+Appends the sequence of the reference genome to its annotations file.
+```
+echo '##FASTA' | cat B71Ref2_a0.3.gff3 - B71Ref2.fasta > B71Ref2.gff3
+```
+
+
+Converts file format to one which works with Snap by generating two files: genome.ann and genome.dna.
+```
+maker2zff B71Ref2.gff3
+```
+
+
+Generates pairs of .ann and .dna files, which contain unique genes up to 1,000 base pairs long.
+```
+fathom genome.ann genome.dna -categorize 1000
+```
+
+
+Extracts annotations and sequence data from the unique base pair files.
+```
+fathom uni.ann uni.dna -export 1000 -plus
+```
+
+
+Generates and condenses the final training data to use with Snap.
+```
+forge export.ann export.dna
+hmm-assembler.pl Moryzae . > Moryzae.hmm
+```
+
+### 2. Snap (training model)
+
+Trains hmm model.
+```
+snap-hmm Moryzae.hmm Bm88315_final.fasta > Bm88315_final-snap.zff
+```
+
+Generates stats about the trained model.
+```
+fathom Bm88315-snap.zff Bm88315_final.fasta -gene-stats
+```
+**Output:**
+* 3934 sequences   
+* 0.492198 avg GC fraction (min=0.168539 max=0.751212)	   
+* 12810 genes (plus=6412 minus=6398)	   
+* 4274 (0.333646) single-exon	   
+* 8536 (0.666354) multi-exon			   
+* 573.070068 mean exon (min=4 max=14714)			   
+* 107.499969 mean intron (min=4 max=1593)	 
+
+
+### 3. Augustus
+Augustus is another hmm gene finder program like Snap, which will also be used for gene prediction.
+
+```
+augustus --species=magnaporthe_grisea --gff3=on \
+--singlestrand=true --progress=true \
+../snap/Bm88315_final.fasta > Bm88315-augustus.gff
+```
+
+### 4. Maker
+Maker is a program that uses the outputs of multiple gene finder programs to make gene predictions.
+
+Generates Maker configuration files.
+```
+Maker -CTL
+```
+
+Runs maker and logs errors.
+```
+maker 2>&1 | tee maker.log
+```
+
+Merges all generated gff files into one.
+```
+gff3_merge -d Bm88315_final_master_datastore_index.log -o Bm88315.maker
+```
+
+Merges the generated sequence data into fasta files.
+```
+fasta_merge -d Bm88315_final_master_datastore_index.log -o Bm88315.maker
+```
