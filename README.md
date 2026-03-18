@@ -1,4 +1,5 @@
 # Bm88315 Genome Assembly
+This genome assembly has been accepted by NCBI and is [publicly accessible here](https://www.ncbi.nlm.nih.gov/sra/SRX27848408[accn]).
 ## Pre-Processing
 ### 1. Analyzing Sequence Quality
 The Bm88315 sequence data was first analyzed using fastqc.
