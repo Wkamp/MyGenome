@@ -7,8 +7,8 @@ The Bm88315 sequence data was first analyzed using fastqc.
 fastqc -t 2 Bm88315_1.fq Bm88315_2.fq -o pretrimmed_fastqc_output
 ```
 **Fastqc Output Pages:**
-* [Forward](https://wkamp.github.io/MyGenome/data/fastqc_output/pretrimmed_Bm88315_1_fastqc.html)
-* [Backward](https://wkamp.github.io/MyGenome/data/fastqc_output/pretrimmed_Bm88315_2_fastqc.html)
+* [Forward](https://wkamp.github.io/Genome-Research/data/fastqc_output/pretrimmed_Bm88315_1_fastqc.html)
+* [Backward](https://wkamp.github.io/Genome-Research/data/fastqc_output/pretrimmed_Bm88315_2_fastqc.html)
 
 The fastqc analysis shows that overall I have a pretty high quality sequence, however there's some adapter contamination and overrepresented sequences which need to be trimmed away.
 | ![Per-base sequence quality in the foward sequence](data/fastqc_output/pretrimmed_forward_quality.png) | 
@@ -41,10 +41,10 @@ Once again I am using fastqc for analysis.
 fastqc -t 2 Bm88315_1_paired.fq Bm88315_1_unpaired.fq Bm88315_2_paired.fq Bm88315_2_unpaired.fq -o trimmed_fastqc_output
 ```
 **Fastqc Output Pages:**
-* [Forward Paired](https://wkamp.github.io/MyGenome/data/fastqc_output/trimmed_Bm88315_1_paired_fastqc.html)
-* [Foward Unpaired](https://wkamp.github.io/MyGenome/data/fastqc_output/trimmed_Bm88315_1_unpaired_fastqc.html)
-* [Backward Paired](https://wkamp.github.io/MyGenome/data/fastqc_output/trimmed_Bm88315_2_paired_fastqc.html)
-* [Backward Unpaired](https://wkamp.github.io/MyGenome/data/fastqc_output/trimmed_Bm88315_2_unpaired_fastqc.html)
+* [Forward Paired](https://wkamp.github.io/Genome-Research/data/fastqc_output/trimmed_Bm88315_1_paired_fastqc.html)
+* [Foward Unpaired](https://wkamp.github.io/Genome-Research/data/fastqc_output/trimmed_Bm88315_1_unpaired_fastqc.html)
+* [Backward Paired](https://wkamp.github.io/Genome-Research/data/fastqc_output/trimmed_Bm88315_2_paired_fastqc.html)
+* [Backward Unpaired](https://wkamp.github.io/Genome-Research/data/fastqc_output/trimmed_Bm88315_2_unpaired_fastqc.html)
 
 As you can see below, the trimming process managed to almost completely remove all adapter contamination. There is however an anomalous overrepresented sequence of all G's in the reverse read, but it shouldn't pose a problem for our genome assembly. 
 | ![Per-base sequence quality in the reverse paired sequence](data/fastqc_output/trimmed_reverse_paired_quality.png) | 
